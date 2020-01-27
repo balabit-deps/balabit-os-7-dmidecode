@@ -1,7 +1,8 @@
 Source: dmidecode
 Section: utils
 Priority: optional
-Maintainer: Jörg Frings-Fürst <debian@jff-webhosting.net>
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Jörg Frings-Fürst <debian@jff-webhosting.net>
 Build-Depends: debhelper (>= 10)
 Standards-Version: 4.0.0
 Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/dmidecode.git

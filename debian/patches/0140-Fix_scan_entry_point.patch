@@ -1,0 +1,46 @@
+Description: Cherry picked fix Only scan /dev/mem for entry point on x86
+Author: Jean Delvare <jdelvare@suse.de>
+Origin: upstream, http://git.savannah.nongnu.org/cgit/dmidecode.git/commit/?id=e12ec26e19e02281d3e7258c3aabb88a5cf5ec1d
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=946911
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1858615
+Last-Update: 2020-01-27
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: dmidecode-3.1/dmidecode.c
+===================================================================
+--- dmidecode-3.1.orig/dmidecode.c
++++ dmidecode-3.1/dmidecode.c
+@@ -4982,7 +4982,7 @@ int main(int argc, char * const argv[])
+ 	off_t fp;
+ 	size_t size;
+ 	int efi;
+-	u8 *buf;
++	u8 *buf = NULL;
+ 
+ 	/*
+ 	 * We don't want stdout and stderr to be mixed up if both are
+@@ -5085,7 +5085,7 @@ int main(int argc, char * const argv[])
+ 			printf("Failed to get SMBIOS data from sysfs.\n");
+ 	}
+ 
+-	/* Next try EFI (ia64, Intel-based Mac) */
++	/* Next try EFI (ia64, Intel-based Mac, arm64) */
+ 	efi = address_from_efi(&fp);
+ 	switch (efi)
+ 	{
+@@ -5118,6 +5118,7 @@ int main(int argc, char * const argv[])
+ 	goto done;
+ 
+ memory_scan:
++#if defined __i386__ || defined __x86_64__
+ 	if (!(opt.flags & FLAG_QUIET))
+ 		printf("Scanning %s for entry point.\n", opt.devmem);
+ 	/* Fallback to memory scan (x86, x86_64) */
+@@ -5160,6 +5161,7 @@ memory_scan:
+ 			}
+ 		}
+ 	}
++#endif
+ 
+ done:
+ 	if (!found && !(opt.flags & FLAG_QUIET))
